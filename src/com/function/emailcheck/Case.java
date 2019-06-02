@@ -21,6 +21,7 @@ public class Case<T> extends Tuple<Supplier<Boolean>, Supplier<Result<T>>> {
         return new DefaultCase<>(() -> true, value);
     }
 
+    @SafeVarargs
     public static <T> Result<T> match(DefaultCase<T> defaultCase, Case<T>... matchers) {
         for (Case<T> aCase : matchers) {
             if (aCase._1.get()) return aCase._2.get();

@@ -1,11 +1,12 @@
 package com.function.emailcheck;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-
 public class EmailCheck {
     private static Pattern emailPattern = Pattern.compile("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");
-
+    private List<String> a = new ArrayList<String>();
     private static Function<String, Result<String>> emailChecker1 = s -> {
         if (s == null) {
             return Result.failure("email must not be null");
