@@ -34,7 +34,7 @@ public class ChatFrame extends Frame {
 
 		textField.addActionListener(e -> {
 			try {
-				send(textField.getText());
+				client.send(textField.getText());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -53,11 +53,6 @@ public class ChatFrame extends Frame {
 		}).start();
 
 		client.hold();
-	}
-
-	private void send(String text) throws Exception {
-		client.send(text);
-		textArea.setText(textArea.getText() + "\n" + client.getCurrent());
 	}
 
 	public static void main(String[] args) throws Exception {

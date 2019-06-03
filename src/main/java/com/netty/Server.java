@@ -2,14 +2,17 @@ package com.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.net.InetSocketAddress;
 import java.util.Iterator;
 
 /**
@@ -46,16 +49,29 @@ public class Server {
 
 class ServerChildHandler extends ChannelInboundHandlerAdapter {
 
-	private void sendAllExceptSelf(ChannelHandlerContext ctx, Object msg) {
+	private void sendAllExceptSelf(ChannelHandlerContext ctx, String msg, boolean isNotice) {
+		InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+		String clientIp = ipSocket.getAddress().getHostAddress();
+		int port = ipSocket.getPort();
+
 		Channel current = ctx.channel();
 		Iterator<Channel> iterator = Server.clients.iterator();
 		while (iterator.hasNext()) {
 			Channel next = iterator.next();
 			if (!next.id().equals(current.id())) {
-				next.writeAndFlush(msg);
+				ByteBuf byteBuf;
+				if (!isNotice) {
+					byteBuf = Unpooled.copiedBuffer((clientIp + "(" + port + "): " + msg).getBytes());
+				}
+				else {
+					byteBuf = Unpooled.copiedBuffer(("[notice]: " + msg).getBytes());
+				}
+				next.writeAndFlush(byteBuf);
 			}
 		}
 	}
+
+
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
 		Server.clients.add(ctx.channel());
@@ -63,32 +79,43 @@ class ServerChildHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		ByteBuf buf = (ByteBuf) msg;
-		byte[] bytes = new byte[buf.readableBytes()];
-		buf.getBytes(buf.readerIndex(), bytes);
-		System.out.println("server recieved: " + new String(bytes));
-		sendAllExceptSelf(ctx, msg);
+		ByteBuf buf = null;
+		try {
+			buf = (ByteBuf) msg;
+			byte[] bytes = new byte[buf.readableBytes()];
+			buf.getBytes(buf.readerIndex(), bytes);
+			String message = new String(bytes);
+			System.out.println("server recieved: " + new String(bytes));
+			sendAllExceptSelf(ctx, message, false);
+		}
+		finally {
+			if (buf != null) {
+				ReferenceCountUtil.release(buf);
+				System.out.println(buf.refCnt());
+			}
+		}
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		cause.printStackTrace();
 		ctx.close();
 	}
 
 	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		sendAllExceptSelf(ctx, "welcome2");
+	public void channelRegistered(ChannelHandlerContext ctx) {
+		InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+		String clientIp = ipSocket.getAddress().getHostAddress();
+		int port = ipSocket.getPort();
+		sendAllExceptSelf(ctx, clientIp + "(" + port + ") is online!", true);
 	}
 
 	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		sendAllExceptSelf(ctx, "bye1");
-	}
-
-	@Override
-	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-		sendAllExceptSelf(ctx, "bye2");
-
+	public void channelUnregistered(ChannelHandlerContext ctx) {
+		InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+		String clientIp = ipSocket.getAddress().getHostAddress();
+		int port = ipSocket.getPort();
+		sendAllExceptSelf(ctx, "Bye Everyone!", false);
+		sendAllExceptSelf(ctx, clientIp + "(" + port + ") is offline!", true);
 	}
 }

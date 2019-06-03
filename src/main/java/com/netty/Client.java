@@ -9,9 +9,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.ReferenceCountUtil;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Description: TODO
@@ -23,6 +23,7 @@ public class Client {
 	EventLoopGroup group;
 	private ChannelFuture f;
 	private List<String> history;
+	private String sendMessage = "";
 
 	public Client() throws Exception {
 		group = new NioEventLoopGroup(1);
@@ -49,7 +50,8 @@ public class Client {
 	}
 
 	public void send(String content) throws Exception {
-		history.add(content);
+		history.add("[我]：" + content);
+		sendMessage = content;
 		f.channel().pipeline().fireChannelActive();
 	}
 
@@ -81,10 +83,10 @@ public class Client {
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
 			ByteBuf buf;
 			if (history == null || history.size() == 0) {
-				buf = Unpooled.copiedBuffer("welcome".getBytes());
+				buf = Unpooled.copiedBuffer("Hello Everyone".getBytes());
 			}
 			else {
-				buf = Unpooled.copiedBuffer(history.get(history.size() - 1).getBytes());
+				buf = Unpooled.copiedBuffer(sendMessage.getBytes());
 			}
 			ctx.writeAndFlush(buf);
 		}
