@@ -1,4 +1,4 @@
-package main.java.com.netty;
+package com.netty;
 
 /**
  * @Description: TODO

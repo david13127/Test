@@ -1,4 +1,4 @@
-package main.java.com.test.enumtest;
+package com.test.enumtest;
 
 public enum Apple {
     Jonathan("Red",1),

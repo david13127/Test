@@ -1,4 +1,4 @@
-package main.java.com.function.emailcheck;
+package com.function.emailcheck;
 
 import java.util.Objects;
 import java.util.function.Function;

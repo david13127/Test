@@ -1,4 +1,4 @@
-package main.java.com.test.enumtest;
+package com.test.enumtest;
 
 public class EnumDemo {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package main.java.com.test.thread;
+package com.test.thread;
 
 public class Quence {
     private int n;

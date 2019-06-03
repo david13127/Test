@@ -1,4 +1,4 @@
-package main.java.com.test.thread;
+package com.test.thread;
 
 public class ThreadDemo {
     public static void main1(String[] args) {
@@ -24,14 +24,14 @@ public class ThreadDemo {
             nt2.t.join();
             nt3.t.join();
         } catch (InterruptedException e) {
-            System.out.println("main.java.com.Main Thread Interrupted.");
+            System.out.println("com.Main Thread Interrupted.");
             e.printStackTrace();
         }
         System.out.println("Thread One is alive: " + nt1.t.isAlive());
         System.out.println("Thread Two is alive: " + nt2.t.isAlive());
         System.out.println("Thread Three is alive: " + nt3.t.isAlive());
 
-        System.out.println("main.java.com.Main Thread Exiting.");
+        System.out.println("com.Main Thread Exiting.");
     }
 
     public static void main(String[] args) {

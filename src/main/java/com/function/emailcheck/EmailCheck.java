@@ -1,4 +1,4 @@
-package main.java.com.function.emailcheck;
+package com.function.emailcheck;
 
 import java.util.ArrayList;
 import java.util.List;

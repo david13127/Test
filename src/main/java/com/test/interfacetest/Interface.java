@@ -1,4 +1,4 @@
-package main.java.com.test.interfacetest;
+package com.test.interfacetest;
 
 public interface Interface {
 

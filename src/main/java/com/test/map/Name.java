@@ -1,4 +1,4 @@
-package main.java.com.test.map;
+package com.test.map;
 
 public class Name {
     private String first;

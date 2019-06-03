@@ -1,4 +1,4 @@
-package main.java.com.netty;
+package com.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;

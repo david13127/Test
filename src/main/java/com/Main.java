@@ -1,5 +1,4 @@
-package main.java.com;
-
+package com;
 import java.util.*;
 
 public class Main {

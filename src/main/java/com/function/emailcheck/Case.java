@@ -1,4 +1,4 @@
-package main.java.com.function.emailcheck;
+package com.function.emailcheck;
 
 public class Case<T> extends Tuple<Supplier<Boolean>, Supplier<Result<T>>> {
 

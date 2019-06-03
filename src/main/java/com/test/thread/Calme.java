@@ -1,4 +1,4 @@
-package main.java.com.test.thread;
+package com.test.thread;
 
 public class Calme {
     public void call(String msg) {

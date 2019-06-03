@@ -1,4 +1,4 @@
-package main.java.com.test.thread;
+package com.test.thread;
 
 public class Consumer implements Runnable {
     private Quence quence;

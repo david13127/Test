@@ -1,4 +1,4 @@
-package main.java.com.test.map;
+package com.test.map;
 
 import java.io.Serializable;
 import java.util.Map;

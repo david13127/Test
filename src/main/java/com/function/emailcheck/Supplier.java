@@ -1,4 +1,4 @@
-package main.java.com.function.emailcheck;
+package com.function.emailcheck;
 
 interface Supplier<T> {
     T get();

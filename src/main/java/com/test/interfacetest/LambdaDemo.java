@@ -1,4 +1,4 @@
-package main.java.com.test.interfacetest;
+package com.test.interfacetest;
 
 public class LambdaDemo {
     private static <R, T> R arrayOp(Lambda<R, T> lambda, T val){
