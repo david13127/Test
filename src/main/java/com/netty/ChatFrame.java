@@ -1,37 +1,36 @@
 package com.netty;
 
-/**
- * @Description: TODO
- * @author : david
- * @date Date : 2019年06月02日 23:17
- * @version V1.0
- */
+import io.netty.util.internal.StringUtil;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * @Description: ChatFrame
+ * @author : david
+ * @date Date : 2019年06月02日 23:17
+ * @version V1.0
+ */
 public class ChatFrame extends Frame {
+
+	static final ChatFrame INSTANCE = new ChatFrame();
+
 	private TextArea textArea = new TextArea();
 	private TextField textField = new TextField();
-	private Client client;
+	private Client client = new Client();
 
-	public ChatFrame() throws Exception {
-		client = new Client();
+	private ChatFrame() {
+
+	}
+
+	private void start() {
 		setSize(800, 600);
 		setResizable(false);
-		setTitle("Tank War");
+		setTitle("Chaaaaat");
 		setVisible(true);
 		this.add(textArea, BorderLayout.CENTER);
 		this.add(textField, BorderLayout.SOUTH);
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				client.exit();
-				System.exit(0);
-			}
-		});
-
 		textField.addActionListener(e -> {
 			try {
 				client.send(textField.getText());
@@ -40,22 +39,36 @@ public class ChatFrame extends Frame {
 			}
 			textField.setText("");
 		});
-		new Thread(() -> {
-			StringBuffer hitory = new StringBuffer();
-			int length = client.getHistorySize();
-			while (true) {
-				if (length < client.getHistorySize()) {
-					hitory.append(client.getCurrent() + "\n");
-					length = client.getHistorySize();
-				}
-				textArea.setText(hitory.toString());
-			}
-		}).start();
 
-		client.hold();
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				client.exit();
+				System.exit(0);
+			}
+		});
+
+		connectToServer();
 	}
 
-	public static void main(String[] args) throws Exception {
-		new ChatFrame();
+	private void connectToServer() {
+		try {
+			client.connect("127.0.0.1", 8888);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	void updateText(String msg) {
+		if (StringUtil.isNullOrEmpty(textArea.getText())) {
+			textArea.setText(msg);
+		} else {
+			textArea.setText(textArea.getText() + System.getProperty("line.separator") + msg);
+		}
+	}
+
+	public static void main(String[] args) {
+		ChatFrame.INSTANCE.start();
 	}
 }

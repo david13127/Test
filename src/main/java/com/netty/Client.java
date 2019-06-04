@@ -9,64 +9,46 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.ReferenceCountUtil;
 
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * @Description: TODO
+ * @Description: Client
  * @author : david
  * @date Date : 2019年06月02日 20:36
  * @version V1.0
  */
-public class Client {
-	EventLoopGroup group;
-	private ChannelFuture f;
-	private List<String> history;
-	private String sendMessage = "";
+class Client {
 
-	public Client() throws Exception {
-		group = new NioEventLoopGroup(1);
-		history = new ArrayList<>();
-		Bootstrap b = new Bootstrap();
-		f = b.group(group).channel(NioSocketChannel.class).handler(new ClientChannelInitializer())
-				.connect("localhost", 8888);
-		f.addListener((ChannelFutureListener) channelFuture -> {
-			if (!channelFuture.isSuccess()) {
-				System.out.println("not connect!");
-			} else {
-				System.out.println("connected!");
-			}
-		});
-	}
+	private Channel channel;
 
-	public void hold() throws Exception {
-		f.channel().closeFuture().sync();
-		group.shutdownGracefully();
-	}
-
-	public void exit(){
-		f.channel().pipeline().disconnect();
-	}
-
-	public void send(String content) throws Exception {
-		history.add("[我]：" + content);
-		sendMessage = content;
-		f.channel().pipeline().fireChannelActive();
-	}
-
-	public int getHistorySize() {
-		if (history != null && history.size() > 0) {
-			return history.size();
+	void connect(String ip, int port) throws Exception {
+		EventLoopGroup group = new NioEventLoopGroup(1);
+		try {
+			Bootstrap b = new Bootstrap();
+			ChannelFuture f = b.group(group).channel(NioSocketChannel.class).handler(new ClientChannelInitializer())
+					.connect(ip, port);
+			f.addListener((ChannelFutureListener) channelFuture -> {
+				if (!channelFuture.isSuccess()) {
+					System.out.println("not connect!");
+				} else {
+					System.out.println("connected!");
+					channel = f.channel();
+				}
+			});
+			f.channel().closeFuture().sync();
 		}
-		return 0;
+		finally {
+			group.shutdownGracefully();
+		}
 	}
 
-	public String getCurrent() {
-		if (history != null && history.size() > 0) {
-			return history.get(history.size() - 1);
-		}
-		return "";
+
+	void exit(){
+		channel.disconnect();
+	}
+
+	void send(String content) {
+		ChatFrame.INSTANCE.updateText("[我]：" + content);
+		ByteBuf buf = Unpooled.copiedBuffer(content.getBytes());
+		channel.writeAndFlush(buf);
 	}
 
 	class ClientChannelInitializer extends ChannelInitializer<SocketChannel> {
@@ -80,25 +62,19 @@ public class Client {
 	class ClientHandler extends ChannelInboundHandlerAdapter {
 
 		@Override
-		public void channelActive(ChannelHandlerContext ctx) throws Exception {
-			ByteBuf buf;
-			if (history == null || history.size() == 0) {
-				buf = Unpooled.copiedBuffer("Hello Everyone".getBytes());
-			}
-			else {
-				buf = Unpooled.copiedBuffer(sendMessage.getBytes());
-			}
+		public void channelActive(ChannelHandlerContext ctx) {
+			ByteBuf buf = Unpooled.copiedBuffer("Hello Everyone".getBytes());
 			ctx.writeAndFlush(buf);
 		}
 
 		@Override
-		public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		public void channelRead(ChannelHandlerContext ctx, Object msg) {
 			ByteBuf buf = null;
 			try {
 				buf = (ByteBuf) msg;
 				byte[] bytes = new byte[buf.readableBytes()];
 				buf.getBytes(buf.readerIndex(), bytes);
-				history.add(new String(bytes));
+				ChatFrame.INSTANCE.updateText(new String(bytes));
 				System.out.println("client recieved: " + new String(bytes));
 			} finally {
 				if (buf != null) {

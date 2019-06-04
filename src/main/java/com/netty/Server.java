@@ -13,7 +13,6 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.net.InetSocketAddress;
-import java.util.Iterator;
 
 /**
  * @Description: TODO
@@ -22,7 +21,7 @@ import java.util.Iterator;
  * @version V1.0
  */
 public class Server {
-	public static ChannelGroup clients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+	static ChannelGroup clients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
 	public static void main(String[] args) throws Exception {
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -55,15 +54,12 @@ class ServerChildHandler extends ChannelInboundHandlerAdapter {
 		int port = ipSocket.getPort();
 
 		Channel current = ctx.channel();
-		Iterator<Channel> iterator = Server.clients.iterator();
-		while (iterator.hasNext()) {
-			Channel next = iterator.next();
+		for (Channel next : Server.clients) {
 			if (!next.id().equals(current.id())) {
 				ByteBuf byteBuf;
 				if (!isNotice) {
 					byteBuf = Unpooled.copiedBuffer((clientIp + "(" + port + "): " + msg).getBytes());
-				}
-				else {
+				} else {
 					byteBuf = Unpooled.copiedBuffer(("[notice]: " + msg).getBytes());
 				}
 				next.writeAndFlush(byteBuf);
@@ -98,7 +94,7 @@ class ServerChildHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		cause.printStackTrace();
+		Server.clients.remove(ctx.channel());
 		ctx.close();
 	}
 
@@ -117,5 +113,6 @@ class ServerChildHandler extends ChannelInboundHandlerAdapter {
 		int port = ipSocket.getPort();
 		sendAllExceptSelf(ctx, "Bye Everyone!", false);
 		sendAllExceptSelf(ctx, clientIp + "(" + port + ") is offline!", true);
+		Server.clients.remove(ctx.channel());
 	}
 }
