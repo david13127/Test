@@ -14,7 +14,7 @@ public interface Interface {
         return getElements(n);
     }
 
-    private int[] getElements(int n) {
+    default int[] getElements(int n) {
         int[] elements = new int[n];
         for (int i = 0; i < n; i++) {
             elements[i] = pop();
