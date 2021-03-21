@@ -1,4 +1,4 @@
-package com.nuban.sort;
+package com.mashibing.algorithm.sort;
 
 import java.util.Arrays;
 import java.util.Random;

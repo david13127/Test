@@ -1,4 +1,4 @@
-package com.nuban.sort;
+package com.mashibing.algorithm.sort;
 
 /**
  * @Description: 插入排序
@@ -15,13 +15,14 @@ public class InsertSort implements Sort {
 		// 第三步：2 3 4
 		// 第四步：1 2 3 4
 		for (int i = 0; i < n; i++) {
-			for (int j = i; j > 0; j--) {
-				if (data[j - 1] > data[j]) {
-					swap(data, j, j - 1);
-				} else {
-					break;
-				}
+			for (int j = i - 1; j >= 0 && data[j] > data[j + 1]; j--) {
+				swap(data, j, j + 1);
 			}
+			//			int j = i;
+			//			while (j - 1 >= 0 && data[j - 1] > data[j]) {
+			//				swap(data, j - 1, j);
+			//				j--;
+			//			}
 		}
 	}
 

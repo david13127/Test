@@ -1,4 +1,4 @@
-package com.nuban.sort;
+package com.mashibing.algorithm.sort;
 
 import java.util.Arrays;
 
@@ -45,14 +45,15 @@ public class HeapSort implements Sort {
 	// 停：较大的孩子都不再比index位置的数大，或者已经没有孩子了
 	private void heapify(int[] arr, int index, int heapSize) {
 		int left = index * 2 + 1; // 左孩子位置
+		int right = left + 1; // 右孩子位置 index * 2 + 2
 		while (left < heapSize) {
-			int largest = left + 1 < heapSize && arr[left + 1] > arr[left] ? left + 1 : left; // 找左右孩子中最大的
+			int largest = right < heapSize && arr[right] > arr[left] ? right : left; // 找左右孩子中最大的
 			int maxIndex = arr[largest] > arr[index] ? largest : index; // 和父pk
 			if (maxIndex == index) {
 				break;
 			}
-			swap(arr, maxIndex, index);
-			index = maxIndex;
+			swap(arr, largest, index);
+			index = largest;
 			left = index * 2 + 1;
 		}
 	}

@@ -1,16 +1,19 @@
-package com.nuban.sort;
+package com.mashibing.algorithm.sort.practice;
+
+import com.mashibing.algorithm.sort.Sort;
+
+import java.util.Arrays;
 
 /**
- * @Description: 归并排序
+ * @Description: TODO
  * @author : david
- * @date Date : 2021年02月10日 13:42
+ * @date Date : 2021年02月15日 21:21
  * @version V1.0
  */
-public class MergeSort implements Sort {
+public class MergeSortTest implements Sort {
 	@Override
 	public void sort(int n, int[] data) {
-		// mergeSort(data, 0, n - 1);
-		mergeSort1(data);
+		mergeSort(data, 0, n - 1);
 	}
 
 	private void mergeSort(int[] data, int left, int right) {
@@ -27,30 +30,20 @@ public class MergeSort implements Sort {
 		int[] temp = new int[data.length];
 		int point1 = left;
 		int point2 = mid + 1;
-		int loc = left; // 表示当前填了哪个数到temp
-		// 两个数组都从左边开始比较，较小的写到temp，较大的再和另一组下个位置比较
+		int loc = left;
 		while (point1 <= mid && point2 <= right) {
-			if (data[point1] <= data[point2]) {
-				temp[loc] = data[point1];
-				loc++;
-				point1++;
+			if (data[point1] < data[point2]) {
+				temp[loc++] = data[point1++];
 			} else {
-				temp[loc] = data[point2];
-				loc++;
-				point2++;
+				temp[loc++] = data[point2++];
 			}
 		}
-		// 如果右边的都比左边的小
-		// 5 6 8 9    0 1 3 4
 		while (point1 <= mid) {
 			temp[loc++] = data[point1++];
 		}
-		// 如果左边的都比右边的小
-		// 0 1 3 4    5 6 8 9
 		while (point2 <= right) {
-			data[loc++] = data[point2++];
+			temp[loc++] = data[point2++];
 		}
-		// 回填
 		for (int i = left; i <= right; i++) {
 			data[i] = temp[i];
 		}
@@ -79,5 +72,10 @@ public class MergeSort implements Sort {
 			}
 			mergeSize *= 2;
 		}
+	}
+	public static void main(String[] args) {
+		Sort sorter = new MergeSortTest();
+		sorter.sort(SORT_DATA.length, SORT_DATA);
+		System.out.println(Arrays.toString(SORT_DATA));
 	}
 }

@@ -1,20 +1,14 @@
-package com.nuban.sort.practice;
+package com.mashibing.algorithm.sort.practice;
 
-import com.nuban.sort.Sort;
+import com.mashibing.algorithm.sort.Sort;
 
 import java.util.Arrays;
 
-/**
- * @Description: TODO
- * @author : david
- * @date Date : 2021年02月10日 9:21
- * @version V1.0
- */
-public class BubbleSortTest implements Sort {
+public class InsertSortTest implements Sort {
 	@Override
 	public void sort(int n, int[] data) {
 		for (int i = 0; i < n; i++) {
-			for (int j = 1; j < n - i; j++) {
+			for (int j = i; j > 0; j--) {
 				if (data[j - 1] > data[j]) {
 					swap(data, j - 1, j);
 				}
@@ -23,7 +17,7 @@ public class BubbleSortTest implements Sort {
 	}
 
 	public static void main(String[] args) {
-		Sort sorter = new BubbleSortTest();
+		Sort sorter = new InsertSortTest();
 		sorter.sort(SORT_DATA.length, SORT_DATA);
 		System.out.println(Arrays.toString(SORT_DATA));
 	}

@@ -1,4 +1,4 @@
-package com.nuban.sort;
+package com.mashibing.algorithm.sort;
 
 /**
  * @Description: 选择排序

@@ -1,6 +1,6 @@
-package com.nuban.sort.practice;
+package com.mashibing.algorithm.sort.practice;
 
-import com.nuban.sort.Sort;
+import com.mashibing.algorithm.sort.Sort;
 
 import java.util.Arrays;
 
