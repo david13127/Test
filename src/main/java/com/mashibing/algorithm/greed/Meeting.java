@@ -1,6 +1,7 @@
-package com.algorithm;
+package com.mashibing.algorithm.greed;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -9,38 +10,8 @@ import java.util.List;
  * @date Date : 2020年04月09日 23:50
  * @version V1.0
  */
-public class Greed {
-	public static void main(String[] args) {
-		Meeting setMeet = new Meeting();
-		setMeet.init();
-		setMeet.solve();
-	}
-}
-
-class Meet implements Comparable<Meet>{
-	int num;
-	int beg;
-	int end;
-
-	Meet(int num, int beg, int end) {
-		this.num = num;
-		this.beg = beg;
-		this.end = end;
-	}
-
-	@Override
-	public int compareTo(Meet o) {
-		if (this.end > o.end) {
-			return 1;
-		}
-		return -1;
-	}
-}
-
-class Meeting {
+public class Meeting {
 	private List<Meet> meetList;
-	private int ans;
-
 	public void init() {
 		Meet meet1 = new Meet(1, 8, 10);
 		Meet meet2 = new Meet(2, 8, 9);
@@ -50,7 +21,7 @@ class Meeting {
 	}
 
 	void solve() {
-		this.meetList.sort(null);
+		this.meetList.sort(Comparator.comparingInt(e -> e.end));
 		System.out.println("排完序的会议时间如下：");
 		System.out.println("num   beg    end");
 		for (Meet meet : this.meetList) {
@@ -58,12 +29,12 @@ class Meeting {
 		}
 		System.out.println("-----------------------------------");
 		System.out.println("选择会议的过程：");
-		this.ans = 0;
+		int ans = 0;
 		int last = 0;
 		for (int i = 0; i < this.meetList.size(); i++) {
 			Meet me = this.meetList.get(i);
 			if (me.beg >= last) {
-				this.ans++;
+				ans++;
 				last = me.end;
 				System.out.println("选择第" + this.meetList.get(i).num + "个会议");
 			}
@@ -71,4 +42,22 @@ class Meeting {
 		System.out.println("最多可安排" + ans + "个会议");
 	}
 
+	public static void main(String[] args) {
+		Meeting greed = new Meeting();
+		greed.init();
+		greed.solve();
+	}
+
+	static class Meet {
+		int num;
+		int beg;
+		int end;
+
+		Meet(int num, int beg, int end) {
+			this.num = num;
+			this.beg = beg;
+			this.end = end;
+		}
+	}
 }
+
