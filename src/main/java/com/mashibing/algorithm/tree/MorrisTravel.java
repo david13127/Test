@@ -1,4 +1,4 @@
-package com.mashibing.algorithm;
+package com.mashibing.algorithm.tree;
 
 import com.nuban.tree.BinarySearchTree;
 import com.nuban.tree.Node;

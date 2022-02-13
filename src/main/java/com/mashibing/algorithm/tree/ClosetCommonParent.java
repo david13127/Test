@@ -1,4 +1,4 @@
-package com.mashibing.algorithm;
+package com.mashibing.algorithm.tree;
 
 import java.util.HashMap;
 import java.util.HashSet;
